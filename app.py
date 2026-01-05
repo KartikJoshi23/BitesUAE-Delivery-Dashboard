@@ -243,7 +243,7 @@ st.markdown(get_css(theme), unsafe_allow_html=True)
 def load_data():
     """Load all cleaned datasets."""
     try:
-        xlsx = pd.ExcelFile('data/cleaned/BitesUAE_Cleaned.xlsx')
+        xlsx = pd.ExcelFile('data/BitesUAE_Cleaned.xlsx')
         customers = pd.read_excel(xlsx, 'CUSTOMERS')
         restaurants = pd.read_excel(xlsx, 'RESTAURANTS')
         riders = pd.read_excel(xlsx, 'RIDERS')
