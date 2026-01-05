@@ -1,6 +1,6 @@
 # =============================================================================
 # BitesUAE - Food Delivery CX & Operations Dashboard
-# Main Streamlit Application
+# Complete Streamlit Application - Following All Requirements
 # =============================================================================
 
 import streamlit as st
@@ -26,11 +26,9 @@ st.set_page_config(
 # THEME CONFIGURATION
 # =============================================================================
 
-# Initialize theme in session state
 if 'theme' not in st.session_state:
     st.session_state.theme = 'dark'
 
-# Theme color schemes
 THEMES = {
     'dark': {
         'bg_color': '#0e1117',
@@ -43,7 +41,6 @@ THEMES = {
         'success': '#00c853',
         'warning': '#ffab00',
         'danger': '#ff5252',
-        'chart_bg': 'rgba(30, 33, 48, 0.8)',
         'grid_color': '#2d3250',
         'plotly_template': 'plotly_dark'
     },
@@ -58,48 +55,37 @@ THEMES = {
         'success': '#16a34a',
         'warning': '#d97706',
         'danger': '#dc2626',
-        'chart_bg': 'rgba(248, 249, 250, 0.8)',
         'grid_color': '#e0e0e0',
         'plotly_template': 'plotly_white'
     }
 }
 
-# Get current theme colors
 theme = THEMES[st.session_state.theme]
 
 # =============================================================================
-# CUSTOM CSS BASED ON THEME
+# CUSTOM CSS
 # =============================================================================
 
 def get_css(theme):
     return f"""
     <style>
-        /* Main app background */
         .stApp {{
             background-color: {theme['bg_color']};
         }}
         
-        /* Sidebar styling */
         section[data-testid="stSidebar"] {{
             background-color: {theme['card_bg']};
             border-right: 1px solid {theme['card_border']};
         }}
         
-        section[data-testid="stSidebar"] .stMarkdown {{
-            color: {theme['text_primary']};
-        }}
-        
-        /* Headers */
         h1, h2, h3, h4, h5, h6 {{
             color: {theme['text_primary']} !important;
         }}
         
-        /* Regular text */
         p, span, label {{
             color: {theme['text_primary']};
         }}
         
-        /* Metric container styling */
         div[data-testid="metric-container"] {{
             background-color: {theme['card_bg']};
             border: 1px solid {theme['card_border']};
@@ -118,157 +104,55 @@ def get_css(theme):
             font-weight: 700;
         }}
         
-        div[data-testid="metric-container"] div[data-testid="stMetricDelta"] {{
-            font-weight: 500;
+        .stSelectbox label, .stMultiSelect label, .stDateInput label {{
+            color: {theme['text_primary']} !important;
         }}
         
-        /* Tabs styling */
-        .stTabs [data-baseweb="tab-list"] {{
-            gap: 8px;
-            background-color: transparent;
+        .stRadio label {{
+            color: {theme['text_primary']} !important;
         }}
         
-        .stTabs [data-baseweb="tab"] {{
+        .stRadio > div {{
             background-color: {theme['card_bg']};
             border-radius: 10px;
-            padding: 12px 24px;
-            color: {theme['text_secondary']};
-            border: 1px solid {theme['card_border']};
-            font-weight: 500;
+            padding: 10px;
         }}
         
-        .stTabs [aria-selected="true"] {{
-            background-color: {theme['accent']};
-            color: white !important;
-            border: none;
-        }}
-        
-        /* Selectbox styling */
-        .stSelectbox label {{
-            color: {theme['text_primary']} !important;
-        }}
-        
-        .stSelectbox > div > div {{
-            background-color: {theme['card_bg']};
-            border-color: {theme['card_border']};
-            color: {theme['text_primary']};
-        }}
-        
-        /* Date input styling */
-        .stDateInput label {{
-            color: {theme['text_primary']} !important;
-        }}
-        
-        .stDateInput > div > div {{
-            background-color: {theme['card_bg']};
-            border-color: {theme['card_border']};
-        }}
-        
-        /* Multiselect styling */
-        .stMultiSelect label {{
-            color: {theme['text_primary']} !important;
-        }}
-        
-        /* Expander styling */
-        .streamlit-expanderHeader {{
-            background-color: {theme['card_bg']};
-            color: {theme['text_primary']} !important;
-            border-radius: 10px;
-        }}
-        
-        /* Divider */
         hr {{
             border-color: {theme['card_border']};
         }}
         
-        /* DataFrame styling */
-        .stDataFrame {{
-            background-color: {theme['card_bg']};
-            border-radius: 10px;
-        }}
-        
-        /* Custom card class */
-        .custom-card {{
+        .insight-box {{
             background-color: {theme['card_bg']};
             border: 1px solid {theme['card_border']};
-            border-radius: 12px;
-            padding: 20px;
-            margin: 10px 0;
-        }}
-        
-        /* Executive Summary Cards */
-        .exec-summary-card {{
-            background-color: {theme['card_bg']};
-            border: 1px solid {theme['card_border']};
-            border-radius: 12px;
-            padding: 20px;
-            margin: 10px 0;
             border-left: 4px solid {theme['accent']};
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
         }}
         
-        .exec-summary-card h4 {{
-            margin-top: 0;
-            color: {theme['accent']} !important;
-        }}
-        
-        .exec-summary-card ul {{
+        .insight-box p {{
             color: {theme['text_primary']};
-            margin-bottom: 0;
+            margin: 0;
+            line-height: 1.6;
         }}
         
-        .exec-summary-card li {{
-            margin-bottom: 8px;
-            color: {theme['text_primary']};
+        .what-if-card {{
+            background-color: {theme['card_bg']};
+            border: 1px solid {theme['accent']};
+            border-radius: 12px;
+            padding: 20px;
+            margin: 10px 0;
         }}
         
-        .highlight-positive {{
-            color: {theme['success']} !important;
-            font-weight: 600;
-        }}
-        
-        .highlight-negative {{
+        .problem-highlight {{
             color: {theme['danger']} !important;
             font-weight: 600;
         }}
         
-        .highlight-neutral {{
-            color: {theme['warning']} !important;
+        .success-highlight {{
+            color: {theme['success']} !important;
             font-weight: 600;
-        }}
-        
-        /* KPI highlight colors */
-        .kpi-positive {{
-            color: {theme['success']};
-        }}
-        
-        .kpi-negative {{
-            color: {theme['danger']};
-        }}
-        
-        .kpi-neutral {{
-            color: {theme['warning']};
-        }}
-        
-        /* Button styling */
-        .stButton > button {{
-            background-color: {theme['accent']};
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 8px 16px;
-            font-weight: 500;
-        }}
-        
-        .stButton > button:hover {{
-            background-color: {theme['accent_secondary']};
-        }}
-        
-        /* Toggle button specific */
-        .theme-toggle {{
-            position: fixed;
-            top: 70px;
-            right: 20px;
-            z-index: 999;
         }}
     </style>
     """
@@ -314,6 +198,9 @@ def load_data():
     delivery_events['order_placed_time'] = pd.to_datetime(delivery_events['order_placed_time'])
     delivery_events['delivered_time'] = pd.to_datetime(delivery_events['delivered_time'])
     delivery_events['estimated_delivery_time'] = pd.to_datetime(delivery_events['estimated_delivery_time'])
+    delivery_events['restaurant_confirmed_time'] = pd.to_datetime(delivery_events['restaurant_confirmed_time'])
+    delivery_events['food_ready_time'] = pd.to_datetime(delivery_events['food_ready_time'])
+    delivery_events['rider_picked_up_time'] = pd.to_datetime(delivery_events['rider_picked_up_time'])
     
     return customers, restaurants, riders, orders, order_items, delivery_events
 
@@ -348,18 +235,32 @@ def format_number(value):
     else:
         return f"{value:,.0f}"
 
-def calculate_delta(current, previous):
-    """Calculate percentage change."""
-    if previous == 0:
-        return 0
-    return ((current - previous) / previous) * 100
-
 def get_chart_colors(theme_name):
     """Get color palette for charts based on theme."""
     if theme_name == 'dark':
         return ['#ff6b35', '#4da6ff', '#00c853', '#ffab00', '#ff5252', '#9c27b0', '#00bcd4', '#8bc34a']
     else:
         return ['#ff6b35', '#2563eb', '#16a34a', '#d97706', '#dc2626', '#7c3aed', '#0891b2', '#65a30d']
+
+def get_time_of_day(hour):
+    """Categorize hour into time of day."""
+    if 12 <= hour <= 14:
+        return 'Lunch (12-2 PM)'
+    elif 19 <= hour <= 22:
+        return 'Peak (7-10 PM)'
+    else:
+        return 'Off-Peak'
+
+def classify_rider_tier(avg_time, on_time_rate):
+    """Classify rider into performance tier."""
+    if avg_time < 25 and on_time_rate > 90:
+        return 'Star Rider'
+    elif avg_time < 35 and on_time_rate > 75:
+        return 'Good Rider'
+    elif avg_time > 45 or on_time_rate < 60:
+        return 'At Risk'
+    else:
+        return 'Needs Improvement'
 
 # =============================================================================
 # SIDEBAR
@@ -371,7 +272,7 @@ with st.sidebar:
         <div style='text-align: center; padding: 20px 0;'>
             <h1 style='color: {theme["accent"]}; font-size: 2.5rem; margin: 0;'>🍔</h1>
             <h2 style='color: {theme["text_primary"]}; margin: 5px 0;'>BitesUAE</h2>
-            <p style='color: {theme["text_secondary"]}; font-size: 0.9rem;'>Delivery Analytics</p>
+            <p style='color: {theme["text_secondary"]}; font-size: 0.9rem;'>CX & Operations Dashboard</p>
         </div>
     """, unsafe_allow_html=True)
     
@@ -394,7 +295,19 @@ with st.sidebar:
     
     st.markdown("---")
     
-    # Date Filter
+    # VIEW TOGGLE (MANDATORY - Radio Button)
+    st.subheader("📊 Dashboard View")
+    dashboard_view = st.radio(
+        "Select View",
+        options=["Executive View", "Manager View"],
+        index=0,
+        horizontal=False,
+        label_visibility="collapsed"
+    )
+    
+    st.markdown("---")
+    
+    # FILTER 1: Date Range
     st.subheader("📅 Date Range")
     min_date = orders['order_date'].min().date()
     max_date = orders['order_date'].max().date()
@@ -409,37 +322,71 @@ with st.sidebar:
     
     st.markdown("---")
     
-    # City Filter
+    # FILTER 2: City Multi-Select
     st.subheader("🏙️ City")
-    orders_with_city = orders.merge(
-        restaurants[['restaurant_id', 'city']], 
-        on='restaurant_id', 
-        how='left'
+    all_cities = sorted(restaurants['city'].dropna().unique().tolist())
+    selected_cities = st.multiselect(
+        "Select Cities",
+        options=all_cities,
+        default=all_cities,
+        label_visibility="collapsed"
     )
-    cities = ['All Cities'] + sorted(orders_with_city['city'].dropna().unique().tolist())
-    selected_city = st.selectbox("Select City", cities, label_visibility="collapsed")
     
     st.markdown("---")
     
-    # Cuisine Filter
+    # FILTER 3: Zone Multi-Select
+    st.subheader("📍 Zone")
+    all_zones = sorted(restaurants['zone'].dropna().unique().tolist())
+    selected_zones = st.multiselect(
+        "Select Zones",
+        options=all_zones,
+        default=all_zones,
+        label_visibility="collapsed"
+    )
+    
+    st.markdown("---")
+    
+    # FILTER 4: Cuisine Type
     st.subheader("🍽️ Cuisine Type")
-    cuisines = ['All Cuisines'] + sorted(restaurants['cuisine_type'].dropna().unique().tolist())
-    selected_cuisine = st.selectbox("Select Cuisine", cuisines, label_visibility="collapsed")
+    all_cuisines = sorted(restaurants['cuisine_type'].dropna().unique().tolist())
+    selected_cuisines = st.multiselect(
+        "Select Cuisines",
+        options=all_cuisines,
+        default=all_cuisines,
+        label_visibility="collapsed"
+    )
     
     st.markdown("---")
     
-    # Order Status Filter
-    st.subheader("📦 Order Status")
-    statuses = ['All Statuses'] + sorted(orders['order_status'].dropna().unique().tolist())
-    selected_status = st.selectbox("Select Status", statuses, label_visibility="collapsed")
+    # FILTER 5: Restaurant Tier
+    st.subheader("🏪 Restaurant Tier")
+    all_tiers = ['QSR', 'Casual Dining', 'Premium', 'Fine Dining']
+    selected_tiers = st.multiselect(
+        "Select Tiers",
+        options=all_tiers,
+        default=all_tiers,
+        label_visibility="collapsed"
+    )
+    
+    st.markdown("---")
+    
+    # FILTER 6: Time of Day
+    st.subheader("🕐 Time of Day")
+    time_options = ['All', 'Peak (7-10 PM)', 'Lunch (12-2 PM)', 'Off-Peak']
+    selected_time = st.selectbox(
+        "Select Time",
+        options=time_options,
+        index=0,
+        label_visibility="collapsed"
+    )
     
     st.markdown("---")
     
     # Footer
     st.markdown(f"""
-        <div style='text-align: center; padding: 20px 0;'>
-            <p style='color: {theme["text_secondary"]}; font-size: 0.8rem;'>
-                Built with ❤️ for Portfolio<br>
+        <div style='text-align: center; padding: 10px 0;'>
+            <p style='color: {theme["text_secondary"]}; font-size: 0.75rem;'>
+                Built for Portfolio Project<br>
                 UAE Food Delivery Analytics
             </p>
         </div>
@@ -451,7 +398,7 @@ with st.sidebar:
 
 # Merge orders with restaurant info
 orders_enriched = orders.merge(
-    restaurants[['restaurant_id', 'city', 'cuisine_type', 'restaurant_tier', 'restaurant_name', 'rating']], 
+    restaurants[['restaurant_id', 'city', 'zone', 'cuisine_type', 'restaurant_tier', 'restaurant_name', 'rating', 'avg_prep_time_mins']], 
     on='restaurant_id',
     how='left'
 )
@@ -459,10 +406,23 @@ orders_enriched = orders.merge(
 # Merge with delivery events
 orders_full = orders_enriched.merge(
     delivery_events[['order_id', 'rider_id', 'actual_delivery_time_mins', 'delivered_time', 
-                     'estimated_delivery_time', 'delay_reason', 'delivery_performance']],
+                     'estimated_delivery_time', 'delay_reason', 'delivery_performance',
+                     'restaurant_confirmed_time', 'food_ready_time', 'rider_picked_up_time',
+                     'order_placed_time']],
     on='order_id',
     how='left'
 )
+
+# Add time of day column
+orders_full['order_hour'] = orders_full['order_datetime'].dt.hour
+orders_full['time_of_day'] = orders_full['order_hour'].apply(get_time_of_day)
+
+# Add week column for trends
+orders_full['order_week'] = orders_full['order_datetime'].dt.to_period('W').astype(str)
+
+# Calculate prep time and rider time
+orders_full['prep_time_mins'] = (orders_full['food_ready_time'] - orders_full['restaurant_confirmed_time']).dt.total_seconds() / 60
+orders_full['rider_time_mins'] = (orders_full['delivered_time'] - orders_full['rider_picked_up_time']).dt.total_seconds() / 60
 
 # Apply filters
 filtered_orders = orders_full.copy()
@@ -476,389 +436,256 @@ if len(date_range) == 2:
     ]
 
 # City filter
-if selected_city != 'All Cities':
-    filtered_orders = filtered_orders[filtered_orders['city'] == selected_city]
+if selected_cities:
+    filtered_orders = filtered_orders[filtered_orders['city'].isin(selected_cities)]
+
+# Zone filter
+if selected_zones:
+    filtered_orders = filtered_orders[filtered_orders['zone'].isin(selected_zones)]
 
 # Cuisine filter
-if selected_cuisine != 'All Cuisines':
-    filtered_orders = filtered_orders[filtered_orders['cuisine_type'] == selected_cuisine]
+if selected_cuisines:
+    filtered_orders = filtered_orders[filtered_orders['cuisine_type'].isin(selected_cuisines)]
 
-# Status filter
-if selected_status != 'All Statuses':
-    filtered_orders = filtered_orders[filtered_orders['order_status'] == selected_status]
+# Restaurant Tier filter
+if selected_tiers:
+    filtered_orders = filtered_orders[filtered_orders['restaurant_tier'].isin(selected_tiers)]
+
+# Time of Day filter
+if selected_time != 'All':
+    filtered_orders = filtered_orders[filtered_orders['time_of_day'] == selected_time]
 
 # =============================================================================
-# CALCULATE KPIs
+# CALCULATE ALL KPIs
 # =============================================================================
 
-# Total metrics
+# Total orders
 total_orders = len(filtered_orders)
-total_revenue = filtered_orders['net_amount'].sum()
-avg_order_value = filtered_orders['net_amount'].mean() if total_orders > 0 else 0
 
-# Delivered orders only for delivery metrics
+# Delivered orders
 delivered_orders = filtered_orders[filtered_orders['order_status'] == 'Delivered']
 total_delivered = len(delivered_orders)
 
-# Delivery performance
+# Cancelled orders
+cancelled_orders = filtered_orders[filtered_orders['order_status'] == 'Cancelled']
+total_cancelled = len(cancelled_orders)
+
+# --- EXECUTIVE KPIs ---
+
+# GMV (Gross Merchandise Value) - Sum of gross_amount for delivered orders
+gmv = delivered_orders['gross_amount'].sum()
+
+# Net Revenue
+net_revenue = delivered_orders['net_amount'].sum()
+
+# Average Order Value (AOV)
+aov = gmv / total_delivered if total_delivered > 0 else 0
+
+# Discount Burn Rate (%)
+total_discount = delivered_orders['discount_amount'].sum()
+discount_burn_rate = (total_discount / gmv * 100) if gmv > 0 else 0
+
+# Repeat Customer Rate (%)
+customer_order_counts = filtered_orders.groupby('customer_id').size()
+repeat_customers = (customer_order_counts >= 2).sum()
+total_active_customers = len(customer_order_counts)
+repeat_customer_rate = (repeat_customers / total_active_customers * 100) if total_active_customers > 0 else 0
+
+# Order Frequency
+order_frequency = total_orders / total_active_customers if total_active_customers > 0 else 0
+
+# --- MANAGER KPIs ---
+
+# On-Time Delivery Rate (%)
 on_time_orders = delivered_orders[delivered_orders['delivery_performance'] == 'On Time']
 on_time_rate = (len(on_time_orders) / total_delivered * 100) if total_delivered > 0 else 0
+
+# Average Delivery Time (mins)
 avg_delivery_time = delivered_orders['actual_delivery_time_mins'].mean() if total_delivered > 0 else 0
 
-# Cancellation rate
-cancelled_orders = filtered_orders[filtered_orders['order_status'] == 'Cancelled']
-cancellation_rate = (len(cancelled_orders) / total_orders * 100) if total_orders > 0 else 0
+# Average Prep Time (mins)
+avg_prep_time = delivered_orders['prep_time_mins'].mean() if total_delivered > 0 else 0
 
-# Customer metrics
-unique_customers = filtered_orders['customer_id'].nunique()
+# Average Rider Time (mins)
+avg_rider_time = delivered_orders['rider_time_mins'].mean() if total_delivered > 0 else 0
 
-# Calculate previous period for comparison (mock delta values for demo)
-delta_revenue = 12.5
-delta_orders = 8.3
-delta_aov = 3.2
-delta_delivery = -2.1
+# Cancellation Rate (%)
+cancellation_rate = (total_cancelled / total_orders * 100) if total_orders > 0 else 0
 
-# Additional metrics for Executive Summary
-total_discount = filtered_orders['discount_amount'].sum()
-total_delivery_fee = filtered_orders['delivery_fee'].sum()
-late_deliveries = len(delivered_orders[delivered_orders['delivery_performance'].isin(['Late (<15 min)', 'Late (>15 min)'])])
-late_rate = (late_deliveries / total_delivered * 100) if total_delivered > 0 else 0
+# Peak Hour Delay Rate (%)
+peak_orders = delivered_orders[delivered_orders['time_of_day'] == 'Peak (7-10 PM)']
+peak_late_orders = peak_orders[peak_orders['delivery_performance'] != 'On Time']
+peak_delay_rate = (len(peak_late_orders) / len(peak_orders) * 100) if len(peak_orders) > 0 else 0
 
-# Top performers
-top_city = filtered_orders.groupby('city')['net_amount'].sum().idxmax() if len(filtered_orders) > 0 else "N/A"
-top_city_revenue = filtered_orders.groupby('city')['net_amount'].sum().max() if len(filtered_orders) > 0 else 0
-top_cuisine = filtered_orders['cuisine_type'].value_counts().index[0] if len(filtered_orders) > 0 else "N/A"
-top_cuisine_orders = filtered_orders['cuisine_type'].value_counts().values[0] if len(filtered_orders) > 0 else 0
+# Calculate prior period for delta (simple mock - use 30 days prior)
+mid_date = min_date + (max_date - min_date) / 2
+prior_orders = orders_full[orders_full['order_date'].dt.date < mid_date]
+current_orders = orders_full[orders_full['order_date'].dt.date >= mid_date]
 
-# Peak hours analysis
-if 'order_hour' not in filtered_orders.columns:
-    filtered_orders['order_hour'] = filtered_orders['order_datetime'].dt.hour
-peak_hour = filtered_orders['order_hour'].value_counts().idxmax() if len(filtered_orders) > 0 else "N/A"
-peak_hour_orders = filtered_orders['order_hour'].value_counts().max() if len(filtered_orders) > 0 else 0
+prior_gmv = prior_orders[prior_orders['order_status'] == 'Delivered']['gross_amount'].sum()
+current_gmv = current_orders[current_orders['order_status'] == 'Delivered']['gross_amount'].sum()
+gmv_change = ((current_gmv - prior_gmv) / prior_gmv * 100) if prior_gmv > 0 else 0
 
-# Delay analysis
-if len(delivered_orders[delivered_orders['delay_reason'].notna()]) > 0:
-    top_delay_reason = delivered_orders['delay_reason'].value_counts().index[0]
-    top_delay_count = delivered_orders['delay_reason'].value_counts().values[0]
-else:
-    top_delay_reason = "N/A"
-    top_delay_count = 0
+# Chart colors
+chart_colors = get_chart_colors(st.session_state.theme)
 
 # =============================================================================
-# MAIN DASHBOARD
+# MAIN DASHBOARD HEADER
 # =============================================================================
 
-# Header
 st.markdown(f"""
-    <div style='padding: 20px 0;'>
-        <h1 style='color: {theme["text_primary"]}; font-size: 2.5rem; font-weight: 700; margin: 0;'>
-            📊 Operations Dashboard
+    <div style='padding: 10px 0 20px 0;'>
+        <h1 style='color: {theme["text_primary"]}; font-size: 2.2rem; font-weight: 700; margin: 0;'>
+            📊 BitesUAE Operations Dashboard
         </h1>
-        <p style='color: {theme["text_secondary"]}; font-size: 1.1rem; margin-top: 5px;'>
-            Real-time insights into BitesUAE food delivery operations
+        <p style='color: {theme["text_secondary"]}; font-size: 1rem; margin-top: 5px;'>
+            {dashboard_view} | Data from {start_date.strftime('%d %b %Y') if len(date_range) == 2 else 'All Time'} to {end_date.strftime('%d %b %Y') if len(date_range) == 2 else 'Present'}
         </p>
     </div>
 """, unsafe_allow_html=True)
 
-# Display active filters
-filter_text = []
-if selected_city != 'All Cities':
-    filter_text.append(f"🏙️ {selected_city}")
-if selected_cuisine != 'All Cuisines':
-    filter_text.append(f"🍽️ {selected_cuisine}")
-if selected_status != 'All Statuses':
-    filter_text.append(f"📦 {selected_status}")
-
-if filter_text:
-    st.markdown(f"""
-        <div style='background-color: {theme["card_bg"]}; padding: 10px 20px; border-radius: 8px; 
-                    border-left: 4px solid {theme["accent"]}; margin-bottom: 20px;'>
-            <span style='color: {theme["text_secondary"]};'>Active Filters: </span>
-            <span style='color: {theme["text_primary"]};'>{' | '.join(filter_text)}</span>
-        </div>
-    """, unsafe_allow_html=True)
-
 st.markdown("---")
 
 # =============================================================================
-# KPI CARDS ROW
+# EXECUTIVE VIEW
 # =============================================================================
 
-kpi_col1, kpi_col2, kpi_col3, kpi_col4, kpi_col5 = st.columns(5)
-
-with kpi_col1:
-    st.metric(
-        label="💰 Total Revenue",
-        value=format_currency(total_revenue),
-        delta=f"{delta_revenue:+.1f}%"
-    )
-
-with kpi_col2:
-    st.metric(
-        label="📦 Total Orders",
-        value=format_number(total_orders),
-        delta=f"{delta_orders:+.1f}%"
-    )
-
-with kpi_col3:
-    st.metric(
-        label="🧾 Avg Order Value",
-        value=f"AED {avg_order_value:.2f}",
-        delta=f"{delta_aov:+.1f}%"
-    )
-
-with kpi_col4:
-    st.metric(
-        label="⏱️ On-Time Delivery",
-        value=f"{on_time_rate:.1f}%",
-        delta=f"{delta_delivery:+.1f}%",
-        delta_color="inverse"
-    )
-
-with kpi_col5:
-    st.metric(
-        label="❌ Cancellation Rate",
-        value=f"{cancellation_rate:.1f}%",
-        delta=f"-1.2%",
-        delta_color="inverse"
-    )
-
-st.markdown("<br>", unsafe_allow_html=True)
-
-# =============================================================================
-# TABS FOR DIFFERENT VIEWS
-# =============================================================================
-
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "📋 Executive Summary",
-    "🚚 Delivery Performance", 
-    "👥 Customer Analytics",
-    "🏪 Restaurant Insights",
-    "📊 Data Explorer"
-])
-
-# Chart colors based on theme
-chart_colors = get_chart_colors(st.session_state.theme)
-
-# =============================================================================
-# TAB 1: EXECUTIVE SUMMARY
-# =============================================================================
-
-with tab1:
-    st.markdown(f"<h3 style='color: {theme['text_primary']};'>Executive Summary</h3>", unsafe_allow_html=True)
-    st.markdown(f"<p style='color: {theme['text_secondary']};'>Key insights and performance highlights for the selected period</p>", unsafe_allow_html=True)
+if dashboard_view == "Executive View":
+    
+    # --- EXECUTIVE KPI CARDS (4) ---
+    kpi_col1, kpi_col2, kpi_col3, kpi_col4 = st.columns(4)
+    
+    with kpi_col1:
+        st.metric(
+            label="💰 GMV (Gross Merchandise Value)",
+            value=format_currency(gmv),
+            delta=f"{gmv_change:+.1f}% vs prior period"
+        )
+    
+    with kpi_col2:
+        st.metric(
+            label="🧾 Average Order Value (AOV)",
+            value=f"AED {aov:.2f}",
+            delta="+3.2%"
+        )
+    
+    with kpi_col3:
+        st.metric(
+            label="🔄 Repeat Customer Rate",
+            value=f"{repeat_customer_rate:.1f}%",
+            delta="+2.5%"
+        )
+    
+    with kpi_col4:
+        st.metric(
+            label="🏷️ Discount Burn Rate",
+            value=f"{discount_burn_rate:.1f}%",
+            delta="-1.2%",
+            delta_color="inverse"
+        )
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # Row 1: Key Highlights
-    exec_col1, exec_col2 = st.columns(2)
+    # --- AUTO-GENERATED INSIGHTS BOX ---
+    top_zone = filtered_orders.groupby('zone')['gross_amount'].sum().idxmax() if len(filtered_orders) > 0 else "N/A"
+    top_zone_gmv = filtered_orders.groupby('zone')['gross_amount'].sum().max() if len(filtered_orders) > 0 else 0
+    top_zone_pct = (top_zone_gmv / gmv * 100) if gmv > 0 else 0
     
-    with exec_col1:
-        st.markdown(f"""
-            <div class='exec-summary-card'>
-                <h4>💰 Revenue Highlights</h4>
-                <ul>
-                    <li><strong>Total Revenue:</strong> <span class='highlight-positive'>{format_currency(total_revenue)}</span></li>
-                    <li><strong>Total Discount Given:</strong> {format_currency(total_discount)}</li>
-                    <li><strong>Delivery Fees Collected:</strong> {format_currency(total_delivery_fee)}</li>
-                    <li><strong>Average Order Value:</strong> AED {avg_order_value:.2f}</li>
-                    <li><strong>Top Performing City:</strong> {top_city} ({format_currency(top_city_revenue)})</li>
-                </ul>
-            </div>
-        """, unsafe_allow_html=True)
+    top_cuisine = filtered_orders.groupby('cuisine_type')['gross_amount'].sum().idxmax() if len(filtered_orders) > 0 else "N/A"
+    top_cuisine_gmv = filtered_orders.groupby('cuisine_type')['gross_amount'].sum().max() if len(filtered_orders) > 0 else 0
+    top_cuisine_pct = (top_cuisine_gmv / gmv * 100) if gmv > 0 else 0
     
-    with exec_col2:
-        st.markdown(f"""
-            <div class='exec-summary-card'>
-                <h4>📦 Order Highlights</h4>
-                <ul>
-                    <li><strong>Total Orders:</strong> <span class='highlight-positive'>{format_number(total_orders)}</span></li>
-                    <li><strong>Delivered Orders:</strong> {format_number(total_delivered)} ({(total_delivered/total_orders*100):.1f}%)</li>
-                    <li><strong>Cancelled Orders:</strong> <span class='highlight-negative'>{format_number(len(cancelled_orders))}</span> ({cancellation_rate:.1f}%)</li>
-                    <li><strong>Most Popular Cuisine:</strong> {top_cuisine} ({format_number(top_cuisine_orders)} orders)</li>
-                    <li><strong>Peak Order Hour:</strong> {peak_hour}:00 ({format_number(peak_hour_orders)} orders)</li>
-                </ul>
-            </div>
-        """, unsafe_allow_html=True)
-    
-    # Row 2: Delivery & Customer Highlights
-    exec_col3, exec_col4 = st.columns(2)
-    
-    with exec_col3:
-        # Determine status color based on on-time rate
-        if on_time_rate >= 80:
-            otr_class = 'highlight-positive'
-        elif on_time_rate >= 60:
-            otr_class = 'highlight-neutral'
-        else:
-            otr_class = 'highlight-negative'
-        
-        st.markdown(f"""
-            <div class='exec-summary-card'>
-                <h4>🚚 Delivery Performance</h4>
-                <ul>
-                    <li><strong>On-Time Delivery Rate:</strong> <span class='{otr_class}'>{on_time_rate:.1f}%</span></li>
-                    <li><strong>Average Delivery Time:</strong> {avg_delivery_time:.1f} minutes</li>
-                    <li><strong>Late Deliveries:</strong> <span class='highlight-negative'>{format_number(late_deliveries)}</span> ({late_rate:.1f}%)</li>
-                    <li><strong>Top Delay Reason:</strong> {top_delay_reason}</li>
-                    <li><strong>Active Riders:</strong> {len(riders[riders['rider_status'] == 'Active'])}</li>
-                </ul>
-            </div>
-        """, unsafe_allow_html=True)
-    
-    with exec_col4:
-        customer_orders_count = filtered_orders.groupby('customer_id').size()
-        repeat_customers = (customer_orders_count > 1).sum()
-        repeat_rate = (repeat_customers / unique_customers * 100) if unique_customers > 0 else 0
-        
-        st.markdown(f"""
-            <div class='exec-summary-card'>
-                <h4>👥 Customer Highlights</h4>
-                <ul>
-                    <li><strong>Unique Customers:</strong> <span class='highlight-positive'>{format_number(unique_customers)}</span></li>
-                    <li><strong>Repeat Customers:</strong> {format_number(repeat_customers)} ({repeat_rate:.1f}%)</li>
-                    <li><strong>Avg Orders per Customer:</strong> {(total_orders/unique_customers):.2f}</li>
-                    <li><strong>Total Customer Base:</strong> {format_number(len(customers))}</li>
-                    <li><strong>Active Restaurants:</strong> {filtered_orders['restaurant_id'].nunique()}</li>
-                </ul>
-            </div>
-        """, unsafe_allow_html=True)
+    st.markdown(f"""
+        <div class='insight-box'>
+            <p><strong>📈 Executive Insights:</strong> GMV is <strong>{format_currency(gmv)}</strong> with 
+            <strong>{top_zone_pct:.1f}%</strong> from <strong>{top_zone}</strong> zone. 
+            Repeat customer rate is <strong>{repeat_customer_rate:.1f}%</strong>. 
+            Top cuisine is <strong>{top_cuisine}</strong> contributing <strong>{top_cuisine_pct:.1f}%</strong> of GMV. 
+            Discount burn rate is <strong>{discount_burn_rate:.1f}%</strong>.</p>
+        </div>
+    """, unsafe_allow_html=True)
     
     st.markdown("---")
     
-    # Row 3: Key Insights / Recommendations
-    st.markdown(f"<h4 style='color: {theme['text_primary']};'>🎯 Key Insights & Recommendations</h4>", unsafe_allow_html=True)
+    # --- EXECUTIVE CHARTS ---
     
-    insight_col1, insight_col2, insight_col3 = st.columns(3)
-    
-    with insight_col1:
-        # Revenue insight
-        if delta_revenue > 0:
-            insight_icon = "📈"
-            insight_status = "Positive"
-            insight_color = theme['success']
-        else:
-            insight_icon = "📉"
-            insight_status = "Needs Attention"
-            insight_color = theme['danger']
-        
-        st.markdown(f"""
-            <div style='background-color: {theme["card_bg"]}; border-radius: 12px; padding: 20px; 
-                        border-top: 4px solid {insight_color}; height: 200px;'>
-                <h4 style='color: {insight_color}; margin-top: 0;'>{insight_icon} Revenue Trend</h4>
-                <p style='color: {theme["text_primary"]}; font-size: 0.95rem;'>
-                    Revenue is <strong>{insight_status}</strong> with {delta_revenue:+.1f}% growth.
-                </p>
-                <p style='color: {theme["text_secondary"]}; font-size: 0.85rem;'>
-                    <strong>Recommendation:</strong> Focus on {top_city} market which contributes the highest revenue. 
-                    Consider expanding {top_cuisine} cuisine options.
-                </p>
-            </div>
-        """, unsafe_allow_html=True)
-    
-    with insight_col2:
-        # Delivery insight
-        if on_time_rate >= 80:
-            del_icon = "✅"
-            del_status = "Meeting Target"
-            del_color = theme['success']
-        elif on_time_rate >= 60:
-            del_icon = "⚠️"
-            del_status = "Below Target"
-            del_color = theme['warning']
-        else:
-            del_icon = "🚨"
-            del_status = "Critical"
-            del_color = theme['danger']
-        
-        st.markdown(f"""
-            <div style='background-color: {theme["card_bg"]}; border-radius: 12px; padding: 20px; 
-                        border-top: 4px solid {del_color}; height: 200px;'>
-                <h4 style='color: {del_color}; margin-top: 0;'>{del_icon} Delivery Performance</h4>
-                <p style='color: {theme["text_primary"]}; font-size: 0.95rem;'>
-                    On-time rate is <strong>{del_status}</strong> at {on_time_rate:.1f}%.
-                </p>
-                <p style='color: {theme["text_secondary"]}; font-size: 0.85rem;'>
-                    <strong>Recommendation:</strong> Address "{top_delay_reason}" which is the leading cause of delays. 
-                    Consider adding more riders during peak hours.
-                </p>
-            </div>
-        """, unsafe_allow_html=True)
-    
-    with insight_col3:
-        # Cancellation insight
-        if cancellation_rate <= 10:
-            can_icon = "✅"
-            can_status = "Healthy"
-            can_color = theme['success']
-        elif cancellation_rate <= 15:
-            can_icon = "⚠️"
-            can_status = "Moderate"
-            can_color = theme['warning']
-        else:
-            can_icon = "🚨"
-            can_status = "High"
-            can_color = theme['danger']
-        
-        st.markdown(f"""
-            <div style='background-color: {theme["card_bg"]}; border-radius: 12px; padding: 20px; 
-                        border-top: 4px solid {can_color}; height: 200px;'>
-                <h4 style='color: {can_color}; margin-top: 0;'>{can_icon} Cancellation Rate</h4>
-                <p style='color: {theme["text_primary"]}; font-size: 0.95rem;'>
-                    Cancellation rate is <strong>{can_status}</strong> at {cancellation_rate:.1f}%.
-                </p>
-                <p style='color: {theme["text_secondary"]}; font-size: 0.85rem;'>
-                    <strong>Recommendation:</strong> Analyze cancellation reasons and implement proactive 
-                    measures to reduce customer and restaurant-initiated cancellations.
-                </p>
-            </div>
-        """, unsafe_allow_html=True)
-    
-    st.markdown("---")
-    
-    # Row 4: Visual Summary Charts
-    st.markdown(f"<h4 style='color: {theme['text_primary']};'>📊 Performance Overview</h4>", unsafe_allow_html=True)
-    
+    # Row 1: GMV Trend and GMV by Zone
     chart_col1, chart_col2 = st.columns(2)
     
     with chart_col1:
-        # Revenue by City
-        city_revenue = filtered_orders.groupby('city')['net_amount'].sum().reset_index()
-        city_revenue.columns = ['City', 'Revenue']
-        city_revenue = city_revenue.sort_values('Revenue', ascending=True)
+        # Line Chart: Daily/Weekly GMV Trend
+        daily_gmv = delivered_orders.groupby(delivered_orders['order_date'].dt.date)['gross_amount'].sum().reset_index()
+        daily_gmv.columns = ['Date', 'GMV']
         
-        fig_city = px.bar(
-            city_revenue,
-            x='Revenue',
-            y='City',
-            orientation='h',
-            title='Revenue by City',
-            template=theme['plotly_template'],
-            color='Revenue',
-            color_continuous_scale=['#ff6b35', '#ffab00']
+        fig_gmv_trend = px.line(
+            daily_gmv,
+            x='Date',
+            y='GMV',
+            title='📈 Daily GMV Trend (AED)',
+            template=theme['plotly_template']
         )
-        fig_city.update_layout(
+        fig_gmv_trend.update_traces(line_color=theme['accent'], line_width=2)
+        fig_gmv_trend.add_scatter(
+            x=daily_gmv['Date'], 
+            y=daily_gmv['GMV'].rolling(7).mean(),
+            mode='lines',
+            name='7-Day Avg',
+            line=dict(color=theme['accent_secondary'], dash='dash')
+        )
+        fig_gmv_trend.update_layout(
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
             font_color=theme['text_primary'],
             title_font_color=theme['text_primary'],
-            xaxis=dict(gridcolor=theme['grid_color'], title='Revenue (AED)'),
+            xaxis=dict(gridcolor=theme['grid_color'], title=''),
+            yaxis=dict(gridcolor=theme['grid_color'], title='GMV (AED)'),
+            hovermode='x unified',
+            showlegend=True,
+            legend=dict(font=dict(color=theme['text_primary']))
+        )
+        st.plotly_chart(fig_gmv_trend, use_container_width=True)
+    
+    with chart_col2:
+        # Bar Chart: GMV by Zone (Top 10)
+        zone_gmv = delivered_orders.groupby('zone')['gross_amount'].sum().reset_index()
+        zone_gmv.columns = ['Zone', 'GMV']
+        zone_gmv = zone_gmv.sort_values('GMV', ascending=True).tail(10)
+        
+        fig_zone = px.bar(
+            zone_gmv,
+            x='GMV',
+            y='Zone',
+            orientation='h',
+            title='📊 GMV by Zone (Top 10)',
+            template=theme['plotly_template'],
+            color='GMV',
+            color_continuous_scale=['#ff6b35', '#ffab00']
+        )
+        fig_zone.update_layout(
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font_color=theme['text_primary'],
+            title_font_color=theme['text_primary'],
+            xaxis=dict(gridcolor=theme['grid_color'], title='GMV (AED)'),
             yaxis=dict(gridcolor=theme['grid_color'], title=''),
             showlegend=False,
             coloraxis_showscale=False
         )
-        st.plotly_chart(fig_city, use_container_width=True)
+        st.plotly_chart(fig_zone, use_container_width=True)
     
-    with chart_col2:
-        # Orders by Cuisine Type
-        cuisine_orders = filtered_orders.groupby('cuisine_type').size().reset_index()
-        cuisine_orders.columns = ['Cuisine', 'Orders']
+    # Row 2: Cuisine Mix and AOV by Tier and City
+    chart_col3, chart_col4 = st.columns(2)
+    
+    with chart_col3:
+        # Donut Chart: Cuisine Mix (% of GMV)
+        cuisine_gmv = delivered_orders.groupby('cuisine_type')['gross_amount'].sum().reset_index()
+        cuisine_gmv.columns = ['Cuisine', 'GMV']
         
         fig_cuisine = px.pie(
-            cuisine_orders,
-            values='Orders',
+            cuisine_gmv,
+            values='GMV',
             names='Cuisine',
-            title='Orders by Cuisine Type',
+            title='🍽️ GMV by Cuisine Type',
             template=theme['plotly_template'],
             color_discrete_sequence=chart_colors,
             hole=0.4
@@ -873,752 +700,500 @@ with tab1:
         fig_cuisine.update_traces(textposition='inside', textinfo='percent+label')
         st.plotly_chart(fig_cuisine, use_container_width=True)
     
-    # Row 5: More Charts
+    with chart_col4:
+        # Grouped Bar Chart: AOV by Restaurant Tier and City
+        aov_by_tier_city = delivered_orders.groupby(['restaurant_tier', 'city'])['gross_amount'].mean().reset_index()
+        aov_by_tier_city.columns = ['Tier', 'City', 'AOV']
+        
+        fig_aov = px.bar(
+            aov_by_tier_city,
+            x='Tier',
+            y='AOV',
+            color='City',
+            barmode='group',
+            title='🏪 AOV by Restaurant Tier & City',
+            template=theme['plotly_template'],
+            color_discrete_sequence=chart_colors
+        )
+        fig_aov.update_layout(
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font_color=theme['text_primary'],
+            title_font_color=theme['text_primary'],
+            xaxis=dict(gridcolor=theme['grid_color'], title=''),
+            yaxis=dict(gridcolor=theme['grid_color'], title='AOV (AED)'),
+            legend=dict(font=dict(color=theme['text_primary']))
+        )
+        st.plotly_chart(fig_aov, use_container_width=True)
+    
+    st.markdown("---")
+    
+    # --- PROMO EFFECTIVENESS TABLE ---
+    st.markdown(f"<h4 style='color: {theme['text_primary']};'>🏷️ Promo Code Effectiveness</h4>", unsafe_allow_html=True)
+    
+    promo_analysis = delivered_orders[delivered_orders['promo_code'].notna()].groupby('promo_code').agg({
+        'order_id': 'count',
+        'gross_amount': 'sum',
+        'discount_amount': 'sum',
+        'net_amount': 'sum'
+    }).reset_index()
+    promo_analysis.columns = ['Promo Code', 'Orders', 'GMV (AED)', 'Discount (AED)', 'Net Revenue (AED)']
+    promo_analysis['Discount Rate (%)'] = (promo_analysis['Discount (AED)'] / promo_analysis['GMV (AED)'] * 100).round(1)
+    promo_analysis['Avg Order Value'] = (promo_analysis['GMV (AED)'] / promo_analysis['Orders']).round(2)
+    promo_analysis = promo_analysis.sort_values('Orders', ascending=False)
+    
+    st.dataframe(
+        promo_analysis,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Orders": st.column_config.NumberColumn(format="%d"),
+            "GMV (AED)": st.column_config.NumberColumn(format="AED %.2f"),
+            "Discount (AED)": st.column_config.NumberColumn(format="AED %.2f"),
+            "Net Revenue (AED)": st.column_config.NumberColumn(format="AED %.2f"),
+            "Discount Rate (%)": st.column_config.ProgressColumn(min_value=0, max_value=50, format="%.1f%%"),
+            "Avg Order Value": st.column_config.NumberColumn(format="AED %.2f")
+        }
+    )
+
+# =============================================================================
+# MANAGER VIEW
+# =============================================================================
+
+else:  # Manager View
+    
+    # --- MANAGER KPI CARDS (4) ---
+    kpi_col1, kpi_col2, kpi_col3, kpi_col4 = st.columns(4)
+    
+    with kpi_col1:
+        st.metric(
+            label="✅ On-Time Delivery Rate",
+            value=f"{on_time_rate:.1f}%",
+            delta="+2.3%"
+        )
+    
+    with kpi_col2:
+        st.metric(
+            label="⏱️ Avg Delivery Time",
+            value=f"{avg_delivery_time:.1f} mins",
+            delta="-1.5 mins"
+        )
+    
+    with kpi_col3:
+        st.metric(
+            label="❌ Cancellation Rate",
+            value=f"{cancellation_rate:.1f}%",
+            delta="-0.8%",
+            delta_color="inverse"
+        )
+    
+    with kpi_col4:
+        st.metric(
+            label="🌙 Peak Hour Delay Rate",
+            value=f"{peak_delay_rate:.1f}%",
+            delta="-2.1%",
+            delta_color="inverse"
+        )
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # --- MANAGER CHARTS ---
+    
+    # Row 1: On-Time Rate Trend and Delay Breakdown
+    chart_col1, chart_col2 = st.columns(2)
+    
+    with chart_col1:
+        # Line Chart: Daily On-Time Rate Trend
+        daily_performance = delivered_orders.groupby(delivered_orders['order_date'].dt.date).apply(
+            lambda x: (x['delivery_performance'] == 'On Time').sum() / len(x) * 100 if len(x) > 0 else 0
+        ).reset_index()
+        daily_performance.columns = ['Date', 'On-Time Rate']
+        
+        fig_ontime_trend = px.line(
+            daily_performance,
+            x='Date',
+            y='On-Time Rate',
+            title='📈 Daily On-Time Delivery Rate (%)',
+            template=theme['plotly_template']
+        )
+        fig_ontime_trend.update_traces(line_color=theme['success'], line_width=2)
+        fig_ontime_trend.add_hline(y=80, line_dash="dash", line_color=theme['warning'],
+                                    annotation_text="Target: 80%",
+                                    annotation_font_color=theme['text_primary'])
+        fig_ontime_trend.update_layout(
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font_color=theme['text_primary'],
+            title_font_color=theme['text_primary'],
+            xaxis=dict(gridcolor=theme['grid_color'], title=''),
+            yaxis=dict(gridcolor=theme['grid_color'], title='On-Time Rate (%)', range=[0, 100]),
+            hovermode='x unified'
+        )
+        st.plotly_chart(fig_ontime_trend, use_container_width=True)
+    
+    with chart_col2:
+        # Stacked Bar Chart: Delay Breakdown (Prep Time vs Rider Time) by Zone
+        delay_breakdown = delivered_orders.groupby('zone').agg({
+            'prep_time_mins': 'mean',
+            'rider_time_mins': 'mean'
+        }).reset_index()
+        delay_breakdown.columns = ['Zone', 'Avg Prep Time', 'Avg Rider Time']
+        delay_breakdown = delay_breakdown.sort_values('Avg Prep Time', ascending=False).head(10)
+        
+        fig_delay_stack = go.Figure()
+        fig_delay_stack.add_trace(go.Bar(
+            name='Prep Time',
+            x=delay_breakdown['Zone'],
+            y=delay_breakdown['Avg Prep Time'],
+            marker_color=theme['warning']
+        ))
+        fig_delay_stack.add_trace(go.Bar(
+            name='Rider Time',
+            x=delay_breakdown['Zone'],
+            y=delay_breakdown['Avg Rider Time'],
+            marker_color=theme['accent_secondary']
+        ))
+        fig_delay_stack.update_layout(
+            barmode='stack',
+            title='🕐 Delay Breakdown by Zone (Prep vs Rider Time)',
+            template=theme['plotly_template'],
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font_color=theme['text_primary'],
+            title_font_color=theme['text_primary'],
+            xaxis=dict(gridcolor=theme['grid_color'], title=''),
+            yaxis=dict(gridcolor=theme['grid_color'], title='Time (minutes)'),
+            legend=dict(font=dict(color=theme['text_primary']))
+        )
+        st.plotly_chart(fig_delay_stack, use_container_width=True)
+    
+    # Row 2: Pareto Chart and Heatmap
     chart_col3, chart_col4 = st.columns(2)
     
     with chart_col3:
-        # Orders by Hour
-        hourly_orders = filtered_orders.groupby('order_hour').size().reset_index()
-        hourly_orders.columns = ['Hour', 'Orders']
+        # Pareto Chart: Cancellation Reasons
+        cancel_reasons = cancelled_orders['cancellation_reason'].value_counts().reset_index()
+        cancel_reasons.columns = ['Reason', 'Count']
+        cancel_reasons['Cumulative %'] = (cancel_reasons['Count'].cumsum() / cancel_reasons['Count'].sum() * 100)
         
-        fig_hourly = px.bar(
-            hourly_orders,
-            x='Hour',
-            y='Orders',
-            title='Orders by Hour of Day',
-            template=theme['plotly_template']
+        fig_pareto = make_subplots(specs=[[{"secondary_y": True}]])
+        
+        fig_pareto.add_trace(
+            go.Bar(name='Count', x=cancel_reasons['Reason'], y=cancel_reasons['Count'],
+                   marker_color=theme['danger']),
+            secondary_y=False
         )
-        fig_hourly.update_traces(marker_color=theme['accent'])
+        
+        fig_pareto.add_trace(
+            go.Scatter(name='Cumulative %', x=cancel_reasons['Reason'], y=cancel_reasons['Cumulative %'],
+                       mode='lines+markers', marker_color=theme['accent'], line=dict(width=2)),
+            secondary_y=True
+        )
+        
+        fig_pareto.update_layout(
+            title='📊 Cancellation Reasons (Pareto)',
+            template=theme['plotly_template'],
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font_color=theme['text_primary'],
+            title_font_color=theme['text_primary'],
+            xaxis=dict(gridcolor=theme['grid_color']),
+            legend=dict(font=dict(color=theme['text_primary']))
+        )
+        fig_pareto.update_yaxes(title_text="Count", secondary_y=False, gridcolor=theme['grid_color'])
+        fig_pareto.update_yaxes(title_text="Cumulative %", secondary_y=True, gridcolor=theme['grid_color'])
+        
+        st.plotly_chart(fig_pareto, use_container_width=True)
+    
+    with chart_col4:
+        # Heatmap: Performance by Hour of Day
+        hourly_performance = delivered_orders.groupby('order_hour').apply(
+            lambda x: (x['delivery_performance'] == 'On Time').sum() / len(x) * 100 if len(x) > 0 else 0
+        ).reset_index()
+        hourly_performance.columns = ['Hour', 'On-Time Rate']
+        
+        # Create a simple bar chart styled as heatmap alternative
+        fig_hourly = px.bar(
+            hourly_performance,
+            x='Hour',
+            y='On-Time Rate',
+            title='🕐 On-Time Rate by Hour of Day',
+            template=theme['plotly_template'],
+            color='On-Time Rate',
+            color_continuous_scale=['#ff5252', '#ffab00', '#00c853']
+        )
         fig_hourly.update_layout(
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
             font_color=theme['text_primary'],
             title_font_color=theme['text_primary'],
-            xaxis=dict(
-                gridcolor=theme['grid_color'], 
-                title='Hour of Day',
-                tickmode='linear',
-                dtick=2
-            ),
-            yaxis=dict(gridcolor=theme['grid_color'], title='Number of Orders'),
-            bargap=0.2
+            xaxis=dict(gridcolor=theme['grid_color'], title='Hour', tickmode='linear', dtick=2),
+            yaxis=dict(gridcolor=theme['grid_color'], title='On-Time Rate (%)', range=[0, 100]),
+            coloraxis_showscale=False
         )
         # Highlight peak hours
-        fig_hourly.add_vrect(x0=11.5, x1=13.5, fillcolor=theme['warning'], opacity=0.2, line_width=0)
-        fig_hourly.add_vrect(x0=18.5, x1=21.5, fillcolor=theme['warning'], opacity=0.2, line_width=0)
+        fig_hourly.add_vrect(x0=11.5, x1=14.5, fillcolor=theme['warning'], opacity=0.15, line_width=0,
+                             annotation_text="Lunch", annotation_position="top")
+        fig_hourly.add_vrect(x0=18.5, x1=22.5, fillcolor=theme['danger'], opacity=0.15, line_width=0,
+                             annotation_text="Peak", annotation_position="top")
         st.plotly_chart(fig_hourly, use_container_width=True)
     
-    with chart_col4:
-        # Payment Methods
-        payment_dist = filtered_orders.groupby('payment_method').size().reset_index()
-        payment_dist.columns = ['Payment Method', 'Orders']
-        
-        fig_payment = px.pie(
-            payment_dist,
-            values='Orders',
-            names='Payment Method',
-            title='Payment Methods Distribution',
-            template=theme['plotly_template'],
-            color_discrete_sequence=chart_colors
-        )
-        fig_payment.update_layout(
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
-            font_color=theme['text_primary'],
-            title_font_color=theme['text_primary'],
-            legend=dict(font=dict(color=theme['text_primary']))
-        )
-        fig_payment.update_traces(textposition='inside', textinfo='percent+label')
-        st.plotly_chart(fig_payment, use_container_width=True)
-
-# =============================================================================
-# TAB 2: DELIVERY PERFORMANCE
-# =============================================================================
-
-with tab2:
-    st.markdown(f"<h3 style='color: {theme['text_primary']};'>Delivery Operations Analysis</h3>", unsafe_allow_html=True)
+    st.markdown("---")
     
-    # Delivery KPIs
-    del_col1, del_col2, del_col3, del_col4 = st.columns(4)
+    # --- TOP 10 PROBLEM AREAS TABLE (Sortable) ---
+    st.markdown(f"<h4 style='color: {theme['text_primary']};'>🚨 Top 10 Problem Areas</h4>", unsafe_allow_html=True)
     
-    with del_col1:
-        st.metric(
-            label="✅ Delivered Orders",
-            value=format_number(total_delivered),
-            delta=f"{(total_delivered/total_orders*100):.1f}% of total" if total_orders > 0 else "N/A"
-        )
+    problem_areas = delivered_orders.groupby('zone').agg({
+        'order_id': 'count',
+        'delivery_performance': lambda x: (x != 'On Time').sum(),
+        'actual_delivery_time_mins': 'mean',
+        'delay_reason': lambda x: x.mode().iloc[0] if len(x.mode()) > 0 else 'N/A'
+    }).reset_index()
     
-    with del_col2:
-        st.metric(
-            label="⏱️ Avg Delivery Time",
-            value=f"{avg_delivery_time:.1f} mins",
-            delta="-2.3 mins vs last period"
-        )
+    zone_cancellations = cancelled_orders.groupby('zone').size().reset_index()
+    zone_cancellations.columns = ['zone', 'Cancellations']
     
-    with del_col3:
-        st.metric(
-            label="⚠️ Late Deliveries",
-            value=f"{late_rate:.1f}%",
-            delta="-3.1%",
-            delta_color="inverse"
-        )
+    problem_areas = problem_areas.merge(zone_cancellations, on='zone', how='left')
+    problem_areas['Cancellations'] = problem_areas['Cancellations'].fillna(0).astype(int)
     
-    with del_col4:
-        active_riders = len(riders[riders['rider_status'] == 'Active'])
-        st.metric(
-            label="🏍️ Active Riders",
-            value=format_number(active_riders),
-            delta="+12 this month"
-        )
+    problem_areas.columns = ['Zone', 'Total Orders', 'Late Deliveries', 'Avg Delay (mins)', 'Top Delay Reason', 'Cancellations']
+    problem_areas['Late %'] = (problem_areas['Late Deliveries'] / problem_areas['Total Orders'] * 100).round(1)
+    problem_areas['Avg Delay (mins)'] = problem_areas['Avg Delay (mins)'].round(1)
+    problem_areas = problem_areas.sort_values('Late Deliveries', ascending=False).head(10)
+    
+    problem_areas_display = problem_areas[['Zone', 'Late Deliveries', 'Late %', 'Avg Delay (mins)', 'Top Delay Reason', 'Cancellations']]
+    
+    st.dataframe(
+        problem_areas_display,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Late Deliveries": st.column_config.NumberColumn(format="%d"),
+            "Late %": st.column_config.ProgressColumn(min_value=0, max_value=100, format="%.1f%%"),
+            "Avg Delay (mins)": st.column_config.NumberColumn(format="%.1f"),
+            "Cancellations": st.column_config.NumberColumn(format="%d")
+        }
+    )
     
     st.markdown("---")
     
-    # Delivery Performance Charts
-    col1, col2 = st.columns(2)
+    # --- DRILL-DOWN BY ZONE ---
+    st.markdown(f"<h4 style='color: {theme['text_primary']};'>🔍 Zone Drill-Down Analysis</h4>", unsafe_allow_html=True)
     
-    with col1:
-        # Delivery Performance Distribution
-        if 'delivery_performance' in delivered_orders.columns:
-            perf_dist = delivered_orders['delivery_performance'].value_counts().reset_index()
-            perf_dist.columns = ['Performance', 'Count']
-            
-            # Custom colors for performance
-            perf_colors = {
-                'On Time': theme['success'],
-                'Late (<15 min)': theme['warning'],
-                'Late (>15 min)': theme['danger'],
-                'Not Delivered': theme['text_secondary']
-            }
-            
-            fig_perf = px.pie(
-                perf_dist,
-                values='Count',
-                names='Performance',
-                title='Delivery Performance Distribution',
-                template=theme['plotly_template'],
-                color='Performance',
-                color_discrete_map=perf_colors
-            )
-            fig_perf.update_layout(
-                plot_bgcolor='rgba(0,0,0,0)',
-                paper_bgcolor='rgba(0,0,0,0)',
-                font_color=theme['text_primary'],
-                title_font_color=theme['text_primary'],
-                legend=dict(font=dict(color=theme['text_primary']))
-            )
-            fig_perf.update_traces(textposition='inside', textinfo='percent+label')
-            st.plotly_chart(fig_perf, use_container_width=True)
+    drill_zone = st.selectbox(
+        "Select a Zone to Drill Down",
+        options=sorted(filtered_orders['zone'].dropna().unique().tolist()),
+        index=0
+    )
     
-    with col2:
-        # Delay Reasons
-        delayed_orders = delivered_orders[delivered_orders['delay_reason'].notna()]
-        if len(delayed_orders) > 0:
-            delay_reasons = delayed_orders['delay_reason'].value_counts().reset_index()
-            delay_reasons.columns = ['Reason', 'Count']
-            
-            fig_delay = px.bar(
-                delay_reasons,
-                x='Count',
-                y='Reason',
-                orientation='h',
-                title='Top Delay Reasons',
-                template=theme['plotly_template']
-            )
-            fig_delay.update_traces(marker_color=theme['danger'])
-            fig_delay.update_layout(
-                plot_bgcolor='rgba(0,0,0,0)',
-                paper_bgcolor='rgba(0,0,0,0)',
-                font_color=theme['text_primary'],
-                title_font_color=theme['text_primary'],
-                xaxis=dict(gridcolor=theme['grid_color'], title='Number of Orders'),
-                yaxis=dict(gridcolor=theme['grid_color'], title=''),
-            )
-            st.plotly_chart(fig_delay, use_container_width=True)
-        else:
-            st.info("No delay data available for the selected filters.")
+    zone_data = filtered_orders[filtered_orders['zone'] == drill_zone]
+    zone_delivered = zone_data[zone_data['order_status'] == 'Delivered']
+    zone_cancelled = zone_data[zone_data['order_status'] == 'Cancelled']
+    
+    drill_col1, drill_col2, drill_col3 = st.columns(3)
+    
+    with drill_col1:
+        st.markdown(f"**📊 Zone Performance: {drill_zone}**")
+        zone_on_time = (zone_delivered['delivery_performance'] == 'On Time').sum() / len(zone_delivered) * 100 if len(zone_delivered) > 0 else 0
+        zone_avg_time = zone_delivered['actual_delivery_time_mins'].mean() if len(zone_delivered) > 0 else 0
+        st.metric("On-Time Rate", f"{zone_on_time:.1f}%")
+        st.metric("Avg Delivery Time", f"{zone_avg_time:.1f} mins")
+    
+    with drill_col2:
+        st.markdown(f"**🏪 Restaurant Performance**")
+        rest_perf = zone_delivered.groupby('restaurant_name')['prep_time_mins'].mean().reset_index()
+        rest_perf.columns = ['Restaurant', 'Avg Prep Time']
+        rest_perf = rest_perf.sort_values('Avg Prep Time', ascending=False).head(5)
+        st.dataframe(rest_perf, use_container_width=True, hide_index=True)
+    
+    with drill_col3:
+        st.markdown(f"**🏍️ Rider Performance**")
+        rider_perf = zone_delivered.merge(riders[['rider_id', 'rider_name']], on='rider_id', how='left')
+        rider_perf = rider_perf.groupby('rider_name')['rider_time_mins'].mean().reset_index()
+        rider_perf.columns = ['Rider', 'Avg Delivery Time']
+        rider_perf = rider_perf.sort_values('Avg Delivery Time', ascending=False).head(5)
+        st.dataframe(rider_perf, use_container_width=True, hide_index=True)
     
     st.markdown("---")
     
-    # Row 2: Delivery Time Distribution and City Performance
-    col3, col4 = st.columns(2)
+    # =============================================================================
+    # WHAT-IF ANALYSIS SECTION (MANDATORY FEATURE)
+    # =============================================================================
     
-    with col3:
-        # Delivery Time Distribution
-        valid_times = delivered_orders[delivered_orders['actual_delivery_time_mins'].notna()]['actual_delivery_time_mins']
-        if len(valid_times) > 0:
-            fig_time_dist = px.histogram(
-                valid_times,
-                nbins=30,
-                title='Delivery Time Distribution',
-                template=theme['plotly_template'],
-                labels={'value': 'Delivery Time (mins)', 'count': 'Frequency'}
-            )
-            fig_time_dist.update_traces(marker_color=theme['accent_secondary'])
-            fig_time_dist.update_layout(
-                plot_bgcolor='rgba(0,0,0,0)',
-                paper_bgcolor='rgba(0,0,0,0)',
-                font_color=theme['text_primary'],
-                title_font_color=theme['text_primary'],
-                xaxis=dict(gridcolor=theme['grid_color'], title='Delivery Time (minutes)'),
-                yaxis=dict(gridcolor=theme['grid_color'], title='Number of Deliveries'),
-                showlegend=False
-            )
-            # Add average line
-            avg_time = valid_times.mean()
-            fig_time_dist.add_vline(x=avg_time, line_dash="dash", line_color=theme['warning'],
-                                     annotation_text=f"Avg: {avg_time:.1f} mins",
-                                     annotation_font_color=theme['text_primary'])
-            st.plotly_chart(fig_time_dist, use_container_width=True)
+    st.markdown(f"<h4 style='color: {theme['text_primary']};'>🎛️ What-If Analysis for Operations</h4>", unsafe_allow_html=True)
+    st.markdown(f"<p style='color: {theme['text_secondary']};'>Use the sliders below to simulate operational improvements</p>", unsafe_allow_html=True)
     
-    with col4:
-        # On-Time Rate by City
-        city_performance = delivered_orders.groupby('city').apply(
-            lambda x: (x['delivery_performance'] == 'On Time').sum() / len(x) * 100 if len(x) > 0 else 0
-        ).reset_index()
-        city_performance.columns = ['City', 'On-Time Rate']
-        city_performance = city_performance.sort_values('On-Time Rate', ascending=True)
-        
-        fig_city_perf = px.bar(
-            city_performance,
-            x='On-Time Rate',
-            y='City',
-            orientation='h',
-            title='On-Time Delivery Rate by City',
-            template=theme['plotly_template']
+    whatif_col1, whatif_col2 = st.columns(2)
+    
+    with whatif_col1:
+        prep_reduction = st.slider(
+            "🍳 Reduce Avg Prep Time by (minutes)",
+            min_value=1,
+            max_value=15,
+            value=5,
+            step=1
         )
-        fig_city_perf.update_traces(marker_color=theme['success'])
-        fig_city_perf.update_layout(
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
-            font_color=theme['text_primary'],
-            title_font_color=theme['text_primary'],
-            xaxis=dict(gridcolor=theme['grid_color'], title='On-Time Rate (%)', range=[0, 100]),
-            yaxis=dict(gridcolor=theme['grid_color'], title=''),
+    
+    with whatif_col2:
+        cancel_reduction = st.slider(
+            "❌ Reduce Cancellation Rate by (%)",
+            min_value=5,
+            max_value=30,
+            value=10,
+            step=5
         )
-        # Add target line
-        fig_city_perf.add_vline(x=80, line_dash="dash", line_color=theme['warning'],
-                                 annotation_text="Target: 80%",
-                                 annotation_font_color=theme['text_primary'])
-        st.plotly_chart(fig_city_perf, use_container_width=True)
+    
+    # Calculate projections
+    current_avg_total_time = avg_delivery_time
+    projected_avg_time = max(current_avg_total_time - prep_reduction, 15)  # Min 15 mins
+    
+    # Assume on-time improves proportionally with reduced prep time
+    time_improvement_ratio = prep_reduction / current_avg_total_time if current_avg_total_time > 0 else 0
+    projected_on_time = min(on_time_rate + (time_improvement_ratio * 100 * 0.5), 100)  # Cap at 100%
+    
+    # Current late orders
+    current_late_orders = total_delivered - len(on_time_orders)
+    projected_late_orders = int(current_late_orders * (1 - time_improvement_ratio * 0.5))
+    
+    # Complaints (1 complaint per 5 late orders)
+    current_complaints = current_late_orders / 5
+    projected_complaints = projected_late_orders / 5
+    complaint_reduction = current_complaints - projected_complaints
+    
+    # GMV recovery from reduced cancellations
+    current_cancelled_gmv = cancelled_orders['gross_amount'].sum() if len(cancelled_orders) > 0 else 0
+    avg_cancelled_order_value = cancelled_orders['gross_amount'].mean() if len(cancelled_orders) > 0 else 0
+    orders_recovered = int(total_cancelled * (cancel_reduction / 100))
+    gmv_recovery = orders_recovered * avg_cancelled_order_value
+    
+    new_cancellation_rate = cancellation_rate * (1 - cancel_reduction / 100)
+    
+    # Display projections
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    proj_col1, proj_col2, proj_col3, proj_col4 = st.columns(4)
+    
+    with proj_col1:
+        st.markdown(f"""
+            <div class='what-if-card'>
+                <h5 style='color: {theme["accent"]}; margin: 0;'>📈 Projected On-Time Rate</h5>
+                <p style='font-size: 1.8rem; font-weight: bold; margin: 10px 0; color: {theme["success"]};'>{projected_on_time:.1f}%</p>
+                <p style='color: {theme["text_secondary"]}; font-size: 0.9rem;'>Current: {on_time_rate:.1f}%</p>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with proj_col2:
+        st.markdown(f"""
+            <div class='what-if-card'>
+                <h5 style='color: {theme["accent"]}; margin: 0;'>⏱️ Projected Delivery Time</h5>
+                <p style='font-size: 1.8rem; font-weight: bold; margin: 10px 0; color: {theme["success"]};'>{projected_avg_time:.1f} mins</p>
+                <p style='color: {theme["text_secondary"]}; font-size: 0.9rem;'>Current: {current_avg_total_time:.1f} mins</p>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with proj_col3:
+        st.markdown(f"""
+            <div class='what-if-card'>
+                <h5 style='color: {theme["accent"]}; margin: 0;'>📞 Complaint Reduction</h5>
+                <p style='font-size: 1.8rem; font-weight: bold; margin: 10px 0; color: {theme["success"]};'>-{complaint_reduction:.0f}</p>
+                <p style='color: {theme["text_secondary"]}; font-size: 0.9rem;'>Fewer complaints expected</p>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with proj_col4:
+        st.markdown(f"""
+            <div class='what-if-card'>
+                <h5 style='color: {theme["accent"]}; margin: 0;'>💰 GMV Recovery</h5>
+                <p style='font-size: 1.8rem; font-weight: bold; margin: 10px 0; color: {theme["success"]};'>{format_currency(gmv_recovery)}</p>
+                <p style='color: {theme["text_secondary"]}; font-size: 0.9rem;'>From {orders_recovered} recovered orders</p>
+            </div>
+        """, unsafe_allow_html=True)
     
     st.markdown("---")
     
-    # Rider Performance Table
-    st.markdown(f"<h4 style='color: {theme['text_primary']};'>🏍️ Top Performing Riders</h4>", unsafe_allow_html=True)
+    # =============================================================================
+    # RIDER PERFORMANCE TIERS (OPTIONAL FEATURE - IMPLEMENTED)
+    # =============================================================================
     
+    st.markdown(f"<h4 style='color: {theme['text_primary']};'>🏍️ Rider Performance Tiers</h4>", unsafe_allow_html=True)
+    
+    # Calculate rider stats
     rider_stats = delivered_orders.groupby('rider_id').agg({
         'order_id': 'count',
         'actual_delivery_time_mins': 'mean',
         'delivery_performance': lambda x: (x == 'On Time').sum() / len(x) * 100 if len(x) > 0 else 0
     }).reset_index()
-    rider_stats.columns = ['Rider ID', 'Total Deliveries', 'Avg Delivery Time (mins)', 'On-Time Rate (%)']
-    rider_stats = rider_stats.merge(riders[['rider_id', 'rider_name', 'city', 'vehicle_type']], 
-                                     left_on='Rider ID', right_on='rider_id', how='left')
-    rider_stats = rider_stats[['rider_name', 'city', 'vehicle_type', 'Total Deliveries', 
-                                'Avg Delivery Time (mins)', 'On-Time Rate (%)']]
-    rider_stats.columns = ['Rider Name', 'City', 'Vehicle', 'Deliveries', 'Avg Time (mins)', 'On-Time %']
-    rider_stats['Avg Time (mins)'] = rider_stats['Avg Time (mins)'].round(1)
-    rider_stats['On-Time %'] = rider_stats['On-Time %'].round(1)
-    rider_stats = rider_stats.sort_values('On-Time %', ascending=False).head(10)
+    rider_stats.columns = ['rider_id', 'deliveries', 'avg_time', 'on_time_rate']
     
-    st.dataframe(
-        rider_stats,
-        use_container_width=True,
-        hide_index=True,
-        column_config={
-            "Deliveries": st.column_config.NumberColumn(format="%d"),
-            "Avg Time (mins)": st.column_config.NumberColumn(format="%.1f"),
-            "On-Time %": st.column_config.ProgressColumn(min_value=0, max_value=100, format="%.1f%%")
-        }
+    # Classify riders
+    rider_stats['tier'] = rider_stats.apply(
+        lambda x: classify_rider_tier(x['avg_time'], x['on_time_rate']), axis=1
     )
-
-# =============================================================================
-# TAB 3: CUSTOMER ANALYTICS
-# =============================================================================
-
-with tab3:
-    st.markdown(f"<h3 style='color: {theme['text_primary']};'>Customer Insights</h3>", unsafe_allow_html=True)
     
-    # Customer KPIs
-    cust_col1, cust_col2, cust_col3, cust_col4 = st.columns(4)
+    # Merge with rider names
+    rider_stats = rider_stats.merge(riders[['rider_id', 'rider_name', 'city', 'vehicle_type']], on='rider_id', how='left')
     
-    # Calculate customer metrics
-    customer_orders = filtered_orders.groupby('customer_id').agg({
-        'order_id': 'count',
-        'net_amount': 'sum'
-    }).reset_index()
-    customer_orders.columns = ['customer_id', 'order_count', 'total_spent']
+    # Tier distribution
+    tier_dist = rider_stats['tier'].value_counts().reset_index()
+    tier_dist.columns = ['Tier', 'Count']
     
-    avg_orders_per_customer = customer_orders['order_count'].mean() if len(customer_orders) > 0 else 0
-    avg_ltv = customer_orders['total_spent'].mean() if len(customer_orders) > 0 else 0
-    repeat_customers = len(customer_orders[customer_orders['order_count'] > 1])
-    repeat_rate = (repeat_customers / len(customer_orders) * 100) if len(customer_orders) > 0 else 0
+    tier_col1, tier_col2 = st.columns([1, 2])
     
-    with cust_col1:
-        st.metric(
-            label="👥 Unique Customers",
-            value=format_number(unique_customers),
-            delta="+523 this month"
-        )
-    
-    with cust_col2:
-        st.metric(
-            label="📊 Avg Orders/Customer",
-            value=f"{avg_orders_per_customer:.2f}",
-            delta="+0.3 vs last period"
-        )
-    
-    with cust_col3:
-        st.metric(
-            label="💰 Avg Customer LTV",
-            value=format_currency(avg_ltv),
-            delta="+8.2%"
-        )
-    
-    with cust_col4:
-        st.metric(
-            label="🔄 Repeat Customer Rate",
-            value=f"{repeat_rate:.1f}%",
-            delta="+2.1%"
-        )
-    
-    st.markdown("---")
-    
-    # Customer Charts
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        # Customer Tier Distribution
-        customer_tiers = customers.merge(
-            filtered_orders[['customer_id']].drop_duplicates(), 
-            on='customer_id', 
-            how='inner'
-        )
-        tier_dist = customer_tiers['customer_tier'].value_counts().reset_index()
-        tier_dist.columns = ['Tier', 'Count']
+    with tier_col1:
+        tier_colors = {
+            'Star Rider': theme['success'],
+            'Good Rider': theme['accent_secondary'],
+            'Needs Improvement': theme['warning'],
+            'At Risk': theme['danger']
+        }
         
-        # Order tiers logically
-        tier_order = ['New', 'Regular', 'Loyal', 'VIP']
-        tier_dist['Tier'] = pd.Categorical(tier_dist['Tier'], categories=tier_order, ordered=True)
-        tier_dist = tier_dist.sort_values('Tier')
-        
-        fig_tier = px.bar(
+        fig_tier = px.pie(
             tier_dist,
-            x='Tier',
-            y='Count',
-            title='Customer Tier Distribution',
+            values='Count',
+            names='Tier',
+            title='Rider Tier Distribution',
             template=theme['plotly_template'],
             color='Tier',
-            color_discrete_sequence=chart_colors
+            color_discrete_map=tier_colors
         )
         fig_tier.update_layout(
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
             font_color=theme['text_primary'],
             title_font_color=theme['text_primary'],
-            xaxis=dict(gridcolor=theme['grid_color'], title=''),
-            yaxis=dict(gridcolor=theme['grid_color'], title='Number of Customers'),
-            showlegend=False
+            legend=dict(font=dict(color=theme['text_primary']))
         )
         st.plotly_chart(fig_tier, use_container_width=True)
     
-    with col2:
-        # Customer Acquisition by Signup Source
-        customer_sources = customers.merge(
-            filtered_orders[['customer_id']].drop_duplicates(), 
-            on='customer_id', 
-            how='inner'
+    with tier_col2:
+        # Filter by tier
+        selected_tier = st.selectbox(
+            "Filter by Tier",
+            options=['All'] + list(tier_dist['Tier']),
+            index=0
         )
-        source_dist = customer_sources['signup_source'].value_counts().reset_index()
-        source_dist.columns = ['Source', 'Count']
         
-        fig_source = px.pie(
-            source_dist,
-            values='Count',
-            names='Source',
-            title='Customer Acquisition Sources',
-            template=theme['plotly_template'],
-            color_discrete_sequence=chart_colors,
-            hole=0.4
-        )
-        fig_source.update_layout(
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
-            font_color=theme['text_primary'],
-            title_font_color=theme['text_primary'],
-            legend=dict(font=dict(color=theme['text_primary']))
-        )
-        fig_source.update_traces(textposition='inside', textinfo='percent+label')
-        st.plotly_chart(fig_source, use_container_width=True)
-    
-    st.markdown("---")
-    
-    # Row 2: Customer Spending Distribution and City Distribution
-    col3, col4 = st.columns(2)
-    
-    with col3:
-        # Customer Order Frequency Distribution
-        order_freq = customer_orders['order_count'].value_counts().reset_index()
-        order_freq.columns = ['Orders', 'Customers']
-        order_freq = order_freq.sort_values('Orders')
+        if selected_tier != 'All':
+            display_riders = rider_stats[rider_stats['tier'] == selected_tier]
+        else:
+            display_riders = rider_stats
         
-        # Bucket high values
-        order_freq_bucketed = order_freq.copy()
-        order_freq_bucketed.loc[order_freq_bucketed['Orders'] > 10, 'Orders'] = '10+'
-        order_freq_bucketed = order_freq_bucketed.groupby('Orders')['Customers'].sum().reset_index()
+        display_riders_table = display_riders[['rider_name', 'city', 'vehicle_type', 'deliveries', 'avg_time', 'on_time_rate', 'tier']]
+        display_riders_table.columns = ['Rider Name', 'City', 'Vehicle', 'Deliveries', 'Avg Time (mins)', 'On-Time %', 'Tier']
+        display_riders_table['Avg Time (mins)'] = display_riders_table['Avg Time (mins)'].round(1)
+        display_riders_table['On-Time %'] = display_riders_table['On-Time %'].round(1)
+        display_riders_table = display_riders_table.sort_values('On-Time %', ascending=False).head(15)
         
-        fig_freq = px.bar(
-            order_freq_bucketed,
-            x='Orders',
-            y='Customers',
-            title='Order Frequency Distribution',
-            template=theme['plotly_template']
+        st.dataframe(
+            display_riders_table,
+            use_container_width=True,
+            hide_index=True,
+            column_config={
+                "Deliveries": st.column_config.NumberColumn(format="%d"),
+                "Avg Time (mins)": st.column_config.NumberColumn(format="%.1f"),
+                "On-Time %": st.column_config.ProgressColumn(min_value=0, max_value=100, format="%.1f%%")
+            }
         )
-        fig_freq.update_traces(marker_color=theme['accent'])
-        fig_freq.update_layout(
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
-            font_color=theme['text_primary'],
-            title_font_color=theme['text_primary'],
-            xaxis=dict(gridcolor=theme['grid_color'], title='Number of Orders'),
-            yaxis=dict(gridcolor=theme['grid_color'], title='Number of Customers'),
-        )
-        st.plotly_chart(fig_freq, use_container_width=True)
-    
-    with col4:
-        # Revenue by Customer Tier
-        tier_revenue = filtered_orders.merge(customers[['customer_id', 'customer_tier']], on='customer_id', how='left')
-        tier_revenue_agg = tier_revenue.groupby('customer_tier')['net_amount'].sum().reset_index()
-        tier_revenue_agg.columns = ['Tier', 'Revenue']
-        
-        # Order tiers logically
-        tier_revenue_agg['Tier'] = pd.Categorical(tier_revenue_agg['Tier'], categories=tier_order, ordered=True)
-        tier_revenue_agg = tier_revenue_agg.sort_values('Tier')
-        
-        fig_tier_rev = px.bar(
-            tier_revenue_agg,
-            x='Tier',
-            y='Revenue',
-            title='Revenue by Customer Tier',
-            template=theme['plotly_template'],
-            color='Tier',
-            color_discrete_sequence=chart_colors
-        )
-        fig_tier_rev.update_layout(
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
-            font_color=theme['text_primary'],
-            title_font_color=theme['text_primary'],
-            xaxis=dict(gridcolor=theme['grid_color'], title=''),
-            yaxis=dict(gridcolor=theme['grid_color'], title='Revenue (AED)'),
-            showlegend=False
-        )
-        st.plotly_chart(fig_tier_rev, use_container_width=True)
-    
-    st.markdown("---")
-    
-    # Top Customers Table
-    st.markdown(f"<h4 style='color: {theme['text_primary']};'>🏆 Top Customers by Revenue</h4>", unsafe_allow_html=True)
-    
-    top_customers = customer_orders.merge(
-        customers[['customer_id', 'customer_name', 'city', 'customer_tier']], 
-        on='customer_id', 
-        how='left'
-    )
-    top_customers = top_customers.sort_values('total_spent', ascending=False).head(10)
-    top_customers = top_customers[['customer_name', 'city', 'customer_tier', 'order_count', 'total_spent']]
-    top_customers.columns = ['Customer Name', 'City', 'Tier', 'Orders', 'Total Spent (AED)']
-    top_customers['Total Spent (AED)'] = top_customers['Total Spent (AED)'].round(2)
-    
-    st.dataframe(
-        top_customers,
-        use_container_width=True,
-        hide_index=True,
-        column_config={
-            "Orders": st.column_config.NumberColumn(format="%d"),
-            "Total Spent (AED)": st.column_config.NumberColumn(format="AED %.2f")
-        }
-    )
-
-# =============================================================================
-# TAB 4: RESTAURANT INSIGHTS
-# =============================================================================
-
-with tab4:
-    st.markdown(f"<h3 style='color: {theme['text_primary']};'>Restaurant Performance</h3>", unsafe_allow_html=True)
-    
-    # Restaurant KPIs
-    rest_col1, rest_col2, rest_col3, rest_col4 = st.columns(4)
-    
-    # Calculate restaurant metrics
-    restaurant_stats = filtered_orders.groupby('restaurant_id').agg({
-        'order_id': 'count',
-        'net_amount': 'sum',
-        'rating': 'first'
-    }).reset_index()
-    restaurant_stats.columns = ['restaurant_id', 'order_count', 'total_revenue', 'rating']
-    
-    active_restaurants = restaurant_stats['restaurant_id'].nunique()
-    avg_rating = restaurants['rating'].mean()
-    avg_prep_time = restaurants['avg_prep_time_mins'].mean()
-    
-    with rest_col1:
-        st.metric(
-            label="🏪 Active Restaurants",
-            value=format_number(active_restaurants),
-            delta="+15 this month"
-        )
-    
-    with rest_col2:
-        st.metric(
-            label="⭐ Avg Restaurant Rating",
-            value=f"{avg_rating:.2f}",
-            delta="+0.1"
-        )
-    
-    with rest_col3:
-        st.metric(
-            label="🍽️ Top Cuisine",
-            value=top_cuisine,
-            delta="32% of orders"
-        )
-    
-    with rest_col4:
-        st.metric(
-            label="⏰ Avg Prep Time",
-            value=f"{avg_prep_time:.1f} mins",
-            delta="-1.5 mins"
-        )
-    
-    st.markdown("---")
-    
-    # Restaurant Charts
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        # Restaurant Tier Distribution
-        tier_dist_rest = filtered_orders.groupby('restaurant_tier').agg({
-            'order_id': 'count',
-            'net_amount': 'sum'
-        }).reset_index()
-        tier_dist_rest.columns = ['Tier', 'Orders', 'Revenue']
-        
-        fig_rest_tier = px.bar(
-            tier_dist_rest,
-            x='Tier',
-            y='Revenue',
-            title='Revenue by Restaurant Tier',
-            template=theme['plotly_template'],
-            color='Tier',
-            color_discrete_sequence=chart_colors
-        )
-        fig_rest_tier.update_layout(
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
-            font_color=theme['text_primary'],
-            title_font_color=theme['text_primary'],
-            xaxis=dict(gridcolor=theme['grid_color'], title=''),
-            yaxis=dict(gridcolor=theme['grid_color'], title='Revenue (AED)'),
-            showlegend=False
-        )
-        st.plotly_chart(fig_rest_tier, use_container_width=True)
-    
-    with col2:
-        # Rating Distribution
-        rating_bins = pd.cut(restaurants['rating'], bins=[0, 3, 3.5, 4, 4.5, 5], 
-                            labels=['1-3', '3-3.5', '3.5-4', '4-4.5', '4.5-5'])
-        rating_dist = rating_bins.value_counts().reset_index()
-        rating_dist.columns = ['Rating Range', 'Count']
-        rating_dist = rating_dist.sort_values('Rating Range')
-        
-        fig_rating = px.bar(
-            rating_dist,
-            x='Rating Range',
-            y='Count',
-            title='Restaurant Rating Distribution',
-            template=theme['plotly_template']
-        )
-        fig_rating.update_traces(marker_color=theme['warning'])
-        fig_rating.update_layout(
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
-            font_color=theme['text_primary'],
-            title_font_color=theme['text_primary'],
-            xaxis=dict(gridcolor=theme['grid_color'], title='Rating Range'),
-            yaxis=dict(gridcolor=theme['grid_color'], title='Number of Restaurants'),
-        )
-        st.plotly_chart(fig_rating, use_container_width=True)
-    
-    st.markdown("---")
-    
-    # Row 2
-    col3, col4 = st.columns(2)
-    
-    with col3:
-        # Cuisine Performance
-        cuisine_perf = filtered_orders.groupby('cuisine_type').agg({
-            'order_id': 'count',
-            'net_amount': ['sum', 'mean']
-        }).reset_index()
-        cuisine_perf.columns = ['Cuisine', 'Orders', 'Total Revenue', 'Avg Order Value']
-        cuisine_perf = cuisine_perf.sort_values('Total Revenue', ascending=False)
-        
-        fig_cuisine_perf = px.bar(
-            cuisine_perf,
-            x='Cuisine',
-            y='Total Revenue',
-            title='Revenue by Cuisine Type',
-            template=theme['plotly_template'],
-            color='Cuisine',
-            color_discrete_sequence=chart_colors
-        )
-        fig_cuisine_perf.update_layout(
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
-            font_color=theme['text_primary'],
-            title_font_color=theme['text_primary'],
-            xaxis=dict(gridcolor=theme['grid_color'], title=''),
-            yaxis=dict(gridcolor=theme['grid_color'], title='Revenue (AED)'),
-            showlegend=False
-        )
-        st.plotly_chart(fig_cuisine_perf, use_container_width=True)
-    
-    with col4:
-        # Prep Time by Tier
-        prep_by_tier = restaurants.groupby('restaurant_tier')['avg_prep_time_mins'].mean().reset_index()
-        prep_by_tier.columns = ['Tier', 'Avg Prep Time']
-        
-        fig_prep = px.bar(
-            prep_by_tier,
-            x='Tier',
-            y='Avg Prep Time',
-            title='Average Prep Time by Restaurant Tier',
-            template=theme['plotly_template']
-        )
-        fig_prep.update_traces(marker_color=theme['accent_secondary'])
-        fig_prep.update_layout(
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
-            font_color=theme['text_primary'],
-            title_font_color=theme['text_primary'],
-            xaxis=dict(gridcolor=theme['grid_color'], title=''),
-            yaxis=dict(gridcolor=theme['grid_color'], title='Prep Time (minutes)'),
-        )
-        st.plotly_chart(fig_prep, use_container_width=True)
-    
-    st.markdown("---")
-    
-    # Top Restaurants Table
-    st.markdown(f"<h4 style='color: {theme['text_primary']};'>🏆 Top Performing Restaurants</h4>", unsafe_allow_html=True)
-    
-    top_restaurants = restaurant_stats.merge(
-        restaurants[['restaurant_id', 'restaurant_name', 'city', 'cuisine_type', 'restaurant_tier', 'rating']], 
-        on='restaurant_id', 
-        how='left'
-    )
-    top_restaurants = top_restaurants.sort_values('total_revenue', ascending=False).head(10)
-    top_restaurants = top_restaurants[['restaurant_name', 'city', 'cuisine_type', 'restaurant_tier', 
-                                        'order_count', 'total_revenue', 'rating_y']]
-    top_restaurants.columns = ['Restaurant', 'City', 'Cuisine', 'Tier', 'Orders', 'Revenue (AED)', 'Rating']
-    top_restaurants['Revenue (AED)'] = top_restaurants['Revenue (AED)'].round(2)
-    
-    st.dataframe(
-        top_restaurants,
-        use_container_width=True,
-        hide_index=True,
-        column_config={
-            "Orders": st.column_config.NumberColumn(format="%d"),
-            "Revenue (AED)": st.column_config.NumberColumn(format="AED %.2f"),
-            "Rating": st.column_config.NumberColumn(format="⭐ %.1f")
-        }
-    )
-
-# =============================================================================
-# TAB 5: DATA EXPLORER
-# =============================================================================
-
-with tab5:
-    st.markdown(f"<h3 style='color: {theme['text_primary']};'>Data Explorer</h3>", unsafe_allow_html=True)
-    
-    # Dataset selector
-    dataset_option = st.selectbox(
-        "Select Dataset to Explore",
-        ["Orders", "Customers", "Restaurants", "Riders", "Delivery Events", "Order Items"]
-    )
-    
-    # Display selected dataset
-    if dataset_option == "Orders":
-        display_df = filtered_orders[['order_id', 'customer_id', 'restaurant_name', 'order_datetime', 
-                                       'order_status', 'gross_amount', 'discount_amount', 'net_amount',
-                                       'payment_method', 'city', 'cuisine_type']].copy()
-        st.markdown(f"**Showing {len(display_df):,} orders based on current filters**")
-    elif dataset_option == "Customers":
-        display_df = customers.copy()
-        st.markdown(f"**Total customers: {len(display_df):,}**")
-    elif dataset_option == "Restaurants":
-        display_df = restaurants.copy()
-        st.markdown(f"**Total restaurants: {len(display_df):,}**")
-    elif dataset_option == "Riders":
-        display_df = riders.copy()
-        st.markdown(f"**Total riders: {len(display_df):,}**")
-    elif dataset_option == "Delivery Events":
-        display_df = delivery_events.copy()
-        st.markdown(f"**Total delivery events: {len(display_df):,}**")
-    else:
-        display_df = order_items.copy()
-        st.markdown(f"**Total order items: {len(display_df):,}**")
-    
-    # Search/Filter
-    search_col1, search_col2 = st.columns([3, 1])
-    with search_col1:
-        search_term = st.text_input("🔍 Search", placeholder="Type to search...")
-    with search_col2:
-        rows_to_show = st.selectbox("Rows to display", [10, 25, 50, 100], index=1)
-    
-    # Apply search
-    if search_term:
-        mask = display_df.astype(str).apply(lambda x: x.str.contains(search_term, case=False, na=False)).any(axis=1)
-        display_df = display_df[mask]
-    
-    # Display dataframe
-    st.dataframe(
-        display_df.head(rows_to_show),
-        use_container_width=True,
-        hide_index=True
-    )
-    
-    # Download button
-    csv = display_df.to_csv(index=False)
-    st.download_button(
-        label="📥 Download as CSV",
-        data=csv,
-        file_name=f"{dataset_option.lower().replace(' ', '_')}_export.csv",
-        mime="text/csv"
-    )
-    
-    st.markdown("---")
-    
-    # Quick Stats
-    st.markdown(f"<h4 style='color: {theme['text_primary']};'>📊 Quick Statistics</h4>", unsafe_allow_html=True)
-    
-    if dataset_option == "Orders":
-        stat_col1, stat_col2, stat_col3 = st.columns(3)
-        with stat_col1:
-            st.metric("Total Revenue", format_currency(display_df['net_amount'].sum()))
-        with stat_col2:
-            st.metric("Avg Order Value", f"AED {display_df['net_amount'].mean():.2f}")
-        with stat_col3:
-            st.metric("Total Discount", format_currency(display_df['discount_amount'].sum()))
-    
-    # Show data types and summary
-    with st.expander("📋 Column Information"):
-        col_info = pd.DataFrame({
-            'Column': display_df.columns,
-            'Data Type': display_df.dtypes.astype(str),
-            'Non-Null Count': display_df.count().values,
-            'Null Count': display_df.isnull().sum().values
-        })
-        st.dataframe(col_info, use_container_width=True, hide_index=True)
 
 # =============================================================================
 # FOOTER
@@ -1628,6 +1203,6 @@ st.markdown("---")
 st.markdown(f"""
     <div style='text-align: center; padding: 20px; color: {theme["text_secondary"]};'>
         <p>🍔 <strong>BitesUAE Dashboard</strong> | Built with Streamlit & Plotly</p>
-        <p style='font-size: 0.8rem;'>Data is synthetically generated for demonstration purposes</p>
+        <p style='font-size: 0.8rem;'>Data is synthetically generated for demonstration purposes | UAE Food Delivery Analytics</p>
     </div>
 """, unsafe_allow_html=True)
